@@ -4,6 +4,18 @@ Skenuojantis parkavimo pagalbininkas su Arduino Uno. Ultragarsinis jutiklis, suk
 
 Projektas sukurtas kaip robotikos kurso 1-asis namų darbas ir veikia [Tinkercad Circuits](https://www.tinkercad.com/circuits) virtualioje aplinkoje.
 
+![Grandinė](docs/grandine.png)
+
+## Demonstracija
+
+<!-- Įrašą įkelkite per Issues -> New issue (nutempkite docs/demo.mp4 į teksto lauką),
+     tada gautą https://github.com/user-attachments/assets/... nuorodą įklijuokite čia
+     atskiroje eilutėje. Arba įdėkite nuorodą į YouTube (Unlisted) įrašą. -->
+
+Demonstracinis įrašas: [`docs/demo.mp4`](docs/demo.mp4)
+
+![LCD ekranas veikimo metu](docs/lcd.png)
+
 ---
 
 ## Turinys
@@ -72,10 +84,14 @@ Viršutinė eilutė rodo artimiausią atstumą ir kampą, kuriuo jis rastas. Apa
 | 1      | Pjezo garsiakalbis                 | Garsinis įspėjimas                 |
 | 1      | LCD 16×2 su I2C (PCF8574)          | Skaitmeninis atvaizdavimas         |
 | 1      | Mygtukas                           | Režimo perjungimas                 |
-| 1      | Potenciometras 250 kΩ              | Jautrumo reguliavimas              |
+| 1      | Potenciometras 250 kΩ *(nebūtinas)* | Jautrumo reguliavimas             |
 | 1      | Maketavimo plokštė + laidai        | Sujungimai                         |
 
+> Potenciometras yra papildoma galimybė. Jei jo grandinėje nėra, kode palikite `USE_POT = false` — tada naudojamas fiksuotas 100 % jautrumas. Su `true` ir neprijungtu A0 kontaktu rodmenys šokinėtų, nes „kabantis“ analoginis įėjimas grąžina atsitiktines reikšmes.
+
 ## Schema ir sujungimai
+
+![Principinė schema](docs/schema.png)
 
 | Komponentas | Kontaktas | Arduino |
 |-------------|-----------|---------|
@@ -92,8 +108,8 @@ Viršutinė eilutė rodo artimiausią atstumą ir kampą, kuriuo jis rastas. Apa
 | RGB LED     | Katodas (ilga koja) | GND |
 | Mygtukas    | Viena koja | D2 |
 | Mygtukas    | Įstrižai priešinga koja | GND |
-| Potenciometras | Kraštiniai kontaktai | 5V ir GND |
-| Potenciometras | Vidurinis (šliaužiklis) | A0 |
+| Potenciometras *(nebūtinas)* | Kraštiniai kontaktai | 5V ir GND |
+| Potenciometras *(nebūtinas)* | Vidurinis (šliaužiklis) | A0 |
 | LCD I2C     | SDA / SCL | A4 / A5 |
 | LCD I2C     | VCC / GND | 5V / GND |
 
@@ -160,6 +176,8 @@ Visi nustatymai sudėti failo viršuje:
 | `TONE_CAUTION`, `TONE_WARNING`, `TONE_STOP` | 440 / 523 / 659 Hz | Garso aukštį |
 | `BEEP_MS` | 40 ms | Pyptelėjimo trukmę |
 | `SOUND_ON` | `true` | `false` visiškai nutildo garsą |
+| `USE_POT` | `false` | `true` įjungia potenciometro valdymą (jis turi būti prijungtas) |
+| `FIXED_SENS` | 100 % | Jautrumas, kai potenciometro nėra |
 | `LCD_TYPE` | `LCD_PCF8574` | I2C plėstuvo tipą |
 | `LCD_ADDR` | `0` | `0` = ieškoti automatiškai, kitaip įrašyti adresą |
 
@@ -181,6 +199,7 @@ Visi nustatymai sudėti failo viršuje:
 - **Ultragarsas nemato minkštų ir įstrižų paviršių.** Garso banga nuo jų atsispindi į šoną ir negrįžta.
 - **Pirminė LCD biblioteka neveikė.** Tinkercad aplinkoje `Adafruit_LiquidCrystal` neprieinama, todėl tvarkyklė parašyta nuo nulio remiantis HD44780 ir PCF8574 dokumentacija.
 - **PWM kontaktų trūkumas.** Dėl `Servo` ir `tone()` užimtų laikmačių mėlynai spalvai PWM nebeliko, todėl ji valdoma tik įjungimo/išjungimo principu.
+- **„Kabantis“ analoginis įėjimas.** Pašalinus potenciometrą, bet palikus `analogRead(A0)`, jautrumas ėmė šokinėti atsitiktinai. Išspręsta `USE_POT` jungikliu — tai geras pavyzdys, kodėl neprijungto analoginio kontakto skaityti negalima.
 
 ## Tobulinimo kryptys
 
@@ -199,7 +218,10 @@ radar-parking-assist/
 │   └── radar_parking_assist/
 │       └── radar_parking_assist.ino   # Visas projekto kodas
 ├── docs/
-│   └── README.md                       # Vieta schemai ir ekrano nuotraukoms
+│   ├── schema.png                      # Principinė schema (Tinkercad)
+│   ├── grandine.png                    # Grandinė ant maketavimo plokštės
+│   ├── lcd.png                         # LCD ekranas veikimo metu
+│   └── demo.mp4                        # Demonstracinis įrašas
 ├── LICENSE
 └── README.md
 ```

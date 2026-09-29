@@ -117,6 +117,12 @@ const byte PIN_BLUE   = 3;   // tik skaitmeninis
 const byte PIN_BUTTON = 2;   // mygtukas i GND, vidinis pull-up
 const byte PIN_POT    = A0;  // jautrumo reguliatorius (vidurinis kontaktas)
 
+// Potenciometras nera butinas. Jei jo grandineje NERA, palikite false:
+// neprijungtas A0 kontaktas grazina atsitiktines reiksmes ir zonu ribos
+// imtu nenuspejamai sokineti.
+const bool USE_POT = false;
+const int  FIXED_SENS = 100;   // jautrumas %, kai USE_POT = false
+
 // ---------- Atstumo zonos (cm) ----------
 const int DIST_SAFE   = 100;
 const int DIST_WARN   = 50;
@@ -324,7 +330,7 @@ void loop() {
   int alertDist = (mode == MODE_SWEEP) ? min(currentDist, closestDist)
                                        : currentDist;
   // Jautrumo reguliatorius: 50-200 % keicia zonu ribas, o ne rodoma atstuma
-  int sens = map(analogRead(PIN_POT), 0, 1023, 50, 200);
+  int sens = USE_POT ? map(analogRead(PIN_POT), 0, 1023, 50, 200) : FIXED_SENS;
   int scaled = (alertDist >= DIST_MAX) ? DIST_MAX
                                        : (int)((long)alertDist * 100 / sens);
   updateAlert(scaled);
